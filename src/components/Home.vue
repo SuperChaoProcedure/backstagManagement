@@ -84,8 +84,6 @@ export default {
         color: #ffffff;
         margin-left: 10px;
       }
-      .el-button {
-      }
     }
 
     .el-aside {
