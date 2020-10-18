@@ -5,7 +5,7 @@
       <img src="../assets/images/logo.png" alt="">
     </div>
   <!-- 表单登录区域 -->
-  <el-form :model="loginForm" :rules="rules" ref="loginRef">
+  <el-form :model="loginForm" :rules="loginFormRules" ref="loginRef">
   <el-form-item prop="username">
     <el-input prefix-icon="el-icon-user-solid" v-model="loginForm.username"></el-input>
   </el-form-item>
@@ -27,7 +27,7 @@ export default {
         username: 'admin',
         password: '123456'
       },
-      rules: {
+      loginFormRules: {
         username: [
           { required: true, message: '请输入用户名称', trigger: 'blur' },
           { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
@@ -45,7 +45,7 @@ export default {
     },
     // 登录操作
     loginJoin () {
-      this.$refs.loginRef.validate(async (valid, not) => {
+      this.$refs.loginRef.validate(async (valid) => {
         // console.log(valid)
         // console.log(not)// 未通过校验的字段
         if (!valid) return console.log('校验失败')

@@ -11,29 +11,46 @@
       </el-header>
       <el-container>
         <!-- menu区域 -->
-        <el-aside width="200px">
+        <el-aside :width="isActive?'60px':'200px'">
+          <!-- 收缩菜单 -->
+          <div class="mnus"  @click="shousuo">|||</div>
           <el-menu
             background-color="#373d41"
             text-color="#fff"
-            active-text-color="#ffd04b"
+            active-text-color="yellow"
+            unique-opened
+            :collapse="isActive"
+            :default-active="IndexParams"
+            router
           >
-            <el-submenu :index="item.id+'' " v-for="item in MenuList" :key="item.id">
+            <el-submenu
+              :index="item.id + ''"
+              v-for="item in MenuList"
+              :key="item.id"
+            >
               <!-- 一级菜单 -->
               <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>{{item.authName}}</span>
+                <i :class="item.icon"></i>
+                <span>{{ item.authName }}</span>
               </template>
               <!-- 二级菜单 -->
-               <el-menu-item index="1-2" v-for="item in item.children" :key="item.id">
-                  <template slot="title">
-                <i class="el-icon-location"></i>
-                <span>{{item.authName}}</span>
-              </template>
-               </el-menu-item>
+              <el-menu-item
+                :index="'/'+item.path "
+                v-for="item in item.children"
+                :key="item.id"
+                @click="toggleActivePath(`/${item.path}`)"
+              >
+                <template slot="title">
+                  <i class="el-icon-location"></i>
+                  <span>{{ item.authName }}</span>
+                </template>
+              </el-menu-item>
             </el-submenu>
           </el-menu>
         </el-aside>
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -41,23 +58,48 @@
 
 <script>
 export default {
-  data () {
-    return {
-      MenuList: []
-    }
-  },
+  // 给组件起个名字
+  home: 'Home',
   // 钩子
   created () {
     this.getMenuList()
+    this.IndexParams = window.sessionStorage.getItem('path')
+  },
+  data () {
+    return {
+      MenuList: [],
+      isActive: false, // 是否折叠菜单
+      IndexParams: ''
+    }
   },
   methods: {
+    // 退出
     logOut () {
       window.sessionStorage.removeItem('token')
       this.$router.push('/login')
     },
-    async  getMenuList () {
+    async getMenuList () {
       const menu = await this.$http.get('menus')
+      const iconsObj = {
+        102: 'iconfont icon-users',
+        125: 'iconfont icon-3702mima',
+        101: 'iconfont icon-shangpin',
+        145: 'iconfont icon-baobiao',
+        103: 'iconfont icon-danju'
+      }
+      menu.data.forEach((item) => {
+        item.icon = iconsObj[item.id]
+      })
       this.MenuList = menu.data
+    },
+    // 收缩菜单
+    shousuo () {
+      this.isActive = !this.isActive
+    },
+    // 页面刷新打开的菜单
+    toggleActivePath (index) {
+      this.IndexParams = index
+      window.sessionStorage.setItem('path', index)
     }
   }
 }
@@ -87,8 +129,16 @@ export default {
     }
 
     .el-aside {
-      height: 100%;
       background-color: #373d41;
+      .el-menu {
+        border-right: none;
+      }
+      .mnus {
+        line-height: 30px;
+        background-color: #4a5064;
+        text-align: center;
+        letter-spacing: 3px;
+      }
     }
 
     .el-main {

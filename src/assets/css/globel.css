@@ -4,3 +4,16 @@ html,body,#app{
     margin: 0;
     padding: 0;
 }
+.el-main{
+    line-height: 0!important;
+}
+.el-card.is-always-shadow{
+    margin-top: 10px;
+    box-shadow: 0 0 2px rgba(0,0,0,.1);
+}
+.el-aside{
+    overflow: hidden;
+}
+.el-table{
+    margin-top: 10px;
+}
