@@ -26,9 +26,9 @@ const routes = [
     { path: '/goods', component: () => import(/* webpackChunkName: "goods" */'../components/goods/Goods.vue') },
     { path: '/params', component: () => import(/* webpackChunkName: "params" */'../components/goods/Params.vue') },
     { path: '/categories', component: () => import(/* webpackChunkName: "categories" */'../components/goods/Categories.vue') },
-    { path: '/add', component: () => import(/* webpackChunkName:add */'@/components/goods/add.vue') },
+    { path: '/add', component: () => import(/* webpackChunkName:"add" */'@/components/goods/add.vue') },
     { path: '/orders', component: () => import(/* webpackChunkName: "orders" */'../components/order/Orders.vue') },
-    { path: '/reports', component: () => import(/* webpackChunkName: "reports" */'../components/report/Reports.vue') }
+    { path: '/reports', component: () => import('../components/report/Reports.vue') }
     ]
   }
 
