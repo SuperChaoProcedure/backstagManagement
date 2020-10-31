@@ -3,9 +3,8 @@
     <!-- 面包屑 -->
     <el-breadcrumb separator=">">
       <el-breadcrumb-item :to="{ path: '/welcome' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-      <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-      <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!-- 卡片区域 -->
     <el-card>
@@ -14,7 +13,11 @@
         <!-- 搜索区域 -->
         <el-col :span="8">
           <!-- input输入框 -->
-          <el-input placeholder="请输入内容" v-model="content" @keyup.enter.native="serchUsers">
+          <el-input
+            placeholder="请输入内容"
+            v-model="content"
+            @keyup.enter.native="serchUsers"
+          >
             <template slot="append">
               <el-button class="el-icon-search" @click="serchUsers"></el-button>
             </template>
@@ -54,16 +57,18 @@
         </el-table-column>
         <!-- 操作部分按钮 -->
         <el-table-column label="操作" width="220">
-          <template>
+          <template slot-scope="scope">
             <el-button
               type="primary"
               icon="el-icon-edit"
               size="mini"
+              @click="editMessage(scope.row)"
             ></el-button>
             <el-button
               type="danger"
-              icon="el-icon-share"
+              icon="el-icon-delete"
               size="mini"
+              @click="delUsers(scope.row)"
             ></el-button>
             <!-- 文字提示 -->
             <el-tooltip
@@ -74,8 +79,9 @@
             >
               <el-button
                 type="warning"
-                icon="el-icon-delete"
+                icon="el-icon-setting"
                 size="mini"
+                @click="UsersCate(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -94,7 +100,7 @@
       </el-pagination>
     </el-card>
 
-    <!-- 对话框 -->
+    <!-- 添加对话框 -->
     <el-dialog title="提示" :visible.sync="addDialogVisible" width="50%">
       <!-- 内容区域 -->
       <el-form
@@ -113,12 +119,72 @@
           <el-input v-model="addForm.email"></el-input>
         </el-form-item>
         <el-form-item label="手机" prop="mobile">
-          <el-input v-model="addForm.mobile" @keyup.enter.native="addUsers"></el-input>
+          <el-input
+            v-model="addForm.mobile"
+            @keyup.enter.native="addUsers"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="addUsers">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 编辑对话框 -->
+    <el-dialog title="提示" :visible.sync="editDialogVisible" width="50%">
+      <!-- 内容区域 -->
+      <el-form
+        ref="editFormRef"
+        :model="editForm"
+        label-width="80px"
+        :rules="addFormRules"
+      >
+        <el-form-item label="用户名">
+          <el-input v-model="editForm.username" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input
+            v-model="editForm.email"
+            @keyup.enter.native="nextFocus"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="手机" prop="mobile">
+          <el-input
+            v-model="editForm.mobile"
+            @keyup.enter.native="editUsers"
+            ref="mobileInputRef"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="editDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="editUsers">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 分配角色对话框 -->
+    <el-dialog title="提示" :visible.sync="UsersDialogVisible" width="30%">
+      <!-- 内容区域 -->
+      <el-form ref="form" :model="UsersForm" label-width="80px">
+        <el-form-item>
+          <p>用户名: {{ UsersForm.username }}</p>
+          <p>当前角色: {{ UsersForm.role_name }}</p>
+          <div>
+            <span>选择当前角色:</span>
+            <el-select v-model="selectRolesId" placeholder="请选择活动区域">
+              <el-option
+                :label="item.roleName"
+                :value="item.id"
+                v-for="(item, index) in UsersForm.Users"
+                :key="index"
+              ></el-option>
+            </el-select>
+          </div>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="UsersDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="RolesAllocation">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -189,7 +255,22 @@ export default {
           { validator: checkpwd, trigger: 'blur' }
         ]
       },
-      content: ''
+      content: '',
+      editDialogVisible: false, // 编辑显示
+      // 编辑模块
+      editForm: {
+        username: '',
+        email: '',
+        mobile: ''
+      },
+      editId: '',
+      UsersDialogVisible: false, // 分配角色对话框
+      UsersForm: {
+        username: '',
+        role_name: '',
+        Users: []
+      },
+      selectRolesId: '' // 角色id
     }
   },
   methods: {
@@ -230,6 +311,71 @@ export default {
       this.queryInfo.query = this.content
       this.getUsersList()
       this.content = ''
+    },
+    // 编辑初始化
+    editMessage (row) {
+      this.editId = row.id
+      this.editForm.username = row.username
+      this.editForm.email = row.email
+      this.editForm.mobile = row.mobile
+      this.editDialogVisible = true
+    },
+    // 点击编辑确定按钮发送数据
+    editUsers () {
+      this.$refs.editFormRef.validate(async (valid) => {
+        if (!valid) return this.$message.error('校验失败！')
+        const res = await this.$http.put(`users/${this.editId}`, this.editForm)
+        if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+        this.$message.success(res.meta.msg)
+        this.role_id = res.data.role_id
+        this.getUsersList()
+        this.editDialogVisible = false
+      })
+    },
+    // 下一个输入框焦点选中
+    nextFocus () {
+      this.$refs.mobileInputRef.focus()
+    },
+    // 删除单个用户
+    delUsers (row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          const res = await this.$http.delete(`users/${row.id}`)
+          if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+          this.$message.success(res.meta.msg)
+          this.getUsersList()
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    },
+    // 分配角色
+    async UsersCate (row) {
+      const res = await this.$http.get('roles')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      res.data.forEach((item) => {
+        this.UsersForm.Users.push(item)
+      })
+      this.UsersForm.username = row.username
+      this.UsersForm.role_name = row.role_name
+      this.editId = row.id
+      this.UsersDialogVisible = true
+    },
+    async RolesAllocation () {
+      const res = await this.$http.put(`users/${this.editId}/role`, {
+        rid: this.selectRolesId
+      })
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.$message.success(res.meta.msg)
+      this.getUsersList()
+      this.UsersDialogVisible = false
     }
   }
 }
@@ -240,5 +386,10 @@ export default {
 }
 .el-pagination {
   margin-top: 10px;
+}
+.el-form-item {
+  /deep/.el-form-item__content {
+    margin-left: 30px !important;
+  }
 }
 </style>

@@ -2,18 +2,19 @@ html,body,#app{
     height: 100%;
     background-color: #2b4b6b;
     margin: 0;
-    padding: 0;
 }
 .el-main{
     line-height: 0!important;
+  background-color: #eaedf1;
+
 }
 .el-card.is-always-shadow{
     margin-top: 10px;
     box-shadow: 0 0 2px rgba(0,0,0,.1);
 }
-.el-aside{
-    overflow: hidden;
-}
 .el-table{
     margin-top: 10px;
 }
+.el-cascader-menu {
+    height: 300px;
+ }

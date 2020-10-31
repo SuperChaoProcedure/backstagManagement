@@ -1,32 +1,31 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Login from '../components/login.vue'
-import Home from '../components/Home.vue'
-import Welcome from '../components/Welcome.vue'
-import Users from '../components/Users/Users.vue'
-import Rights from '../components/Rights/Rights.vue'
-import Roles from '../components/Rights/Roles.vue'
 Vue.use(VueRouter)
 const routes = [
+  // 实现路由懒加载
   {
     path: '/',
     redirect: '/login'
   }, {
     path: '/login',
-    component: Login
+    component: () => import(/* webpackChunkName: "login" */'../components/login.vue')
   }, {
     path: '/home',
-    component: Home,
+    component: () => import(/* webpackChunkName: "home" */'../components/Home.vue'),
     redirect: '/welcome',
     children: [{
-      path: '/welcome', component: Welcome
+      path: '/welcome', component: () => import(/* webpackChunkName: "welcome" */'../components/Welcome.vue')
     }, {
-      path: '/users', component: Users
+      path: '/users', component: () => import(/* webpackChunkName: "users" */'../components/Users/Users.vue')
     }, {
-      path: '/roles', component: Roles
+      path: '/roles', component: () => import(/* webpackChunkName: "roles" */'../components/Rights/Roles.vue')
     }, {
-      path: '/rights', component: Rights
-    }]
+      path: '/rights', component: () => import(/* webpackChunkName: "rights" */'../components/Rights/Rights.vue')
+    },
+    { path: '/goods', component: () => import(/* webpackChunkName: "goods" */'../components/goods/Goods.vue') },
+    { path: '/params', component: () => import(/* webpackChunkName: "params" */'../components/goods/Params.vue') },
+    { path: '/categories', component: () => import(/* webpackChunkName: "categories" */'../components/goods/Categories.vue') }
+    ]
   }
 ]
 

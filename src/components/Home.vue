@@ -1,6 +1,5 @@
 <template>
-  <div class="container">
-    <el-container>
+    <el-container class="home-container">
       <!-- header区域 -->
       <el-header>
         <div>
@@ -53,7 +52,6 @@
         </el-main>
       </el-container>
     </el-container>
-  </div>
 </template>
 
 <script>
@@ -105,13 +103,9 @@ export default {
 }
 </script>
 <style scoped lang="less">
-.container {
+.home-container{
   height: 100%;
-  background-color: #eaedf1;
-
-  .el-container {
-    height: 100%;
-    .el-header {
+  .el-header {
       display: flex;
       justify-content: space-between;
       padding-left: 0;
@@ -127,7 +121,7 @@ export default {
         margin-left: 10px;
       }
     }
-
+  .el-container {
     .el-aside {
       background-color: #373d41;
       .el-menu {
@@ -144,7 +138,6 @@ export default {
     .el-main {
       background-color: #e9eef3;
       color: #333;
-      line-height: 160px;
     }
   }
 }

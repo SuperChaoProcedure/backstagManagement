@@ -5,6 +5,7 @@ import './assets/fonts/iconfont.css'
 import './plugins/element'
 import axios from 'axios'
 import './assets/css/globel.css'
+import ZkTable from 'vue-table-with-tree-grid'
 Vue.config.productionTip = false
 axios.defaults.baseURL = 'http://127.0.0.1:8888/api/private/v1/'
 // axios请求拦截器
@@ -18,6 +19,7 @@ axios.interceptors.request.use(
   }
 )
 
+Vue.component('tree-table', ZkTable)
 // axios响应拦截器
 axios.interceptors.response.use(
   function (res) {
