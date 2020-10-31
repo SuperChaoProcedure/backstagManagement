@@ -73,9 +73,21 @@ export default {
   methods: {
     // 退出
     logOut () {
-      window.sessionStorage.removeItem('token')
-      this.$router.push('/login')
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        window.sessionStorage.removeItem('token')
+        this.$router.push('/login')
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     },
+    // 给菜单添加不同icon图标
     async getMenuList () {
       const menu = await this.$http.get('menus')
       const iconsObj = {

@@ -18,3 +18,8 @@ html,body,#app{
 .el-cascader-menu {
     height: 300px;
  }
+ /* 修改nprogress样式 */
+ #nprogress .bar {
+     background:pink !important;
+     height: 5px  !important;
+ }

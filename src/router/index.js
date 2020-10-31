@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
 Vue.use(VueRouter)
 const routes = [
   // 实现路由懒加载
@@ -24,11 +25,14 @@ const routes = [
     },
     { path: '/goods', component: () => import(/* webpackChunkName: "goods" */'../components/goods/Goods.vue') },
     { path: '/params', component: () => import(/* webpackChunkName: "params" */'../components/goods/Params.vue') },
-    { path: '/categories', component: () => import(/* webpackChunkName: "categories" */'../components/goods/Categories.vue') }
+    { path: '/categories', component: () => import(/* webpackChunkName: "categories" */'../components/goods/Categories.vue') },
+    { path: '/add', component: () => import(/* webpackChunkName:add */'@/components/goods/add.vue') },
+    { path: '/orders', component: () => import(/* webpackChunkName: "orders" */'../components/order/Orders.vue') },
+    { path: '/reports', component: () => import(/* webpackChunkName: "reports" */'../components/report/Reports.vue') }
     ]
   }
-]
 
+]
 const router = new VueRouter({
   routes
 })

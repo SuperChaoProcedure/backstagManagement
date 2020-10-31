@@ -24,10 +24,10 @@
         </el-col>
         <el-col :span="16">
           <!-- 添加按钮 -->
-          <el-button type="primary" @click="addUsers">添加角色</el-button>
+          <el-button type="primary" @click="$router.push('/add')">添加商品</el-button>
         </el-col>
       </el-row>
-      <!-- 表格秋雨-->
+      <!-- 表格区域-->
       <el-table :data="goodsList" style="width: 100%" stripe border>
         <el-table-column type="index" label="#" width="180"> </el-table-column>
         <el-table-column prop="goods_name" label="商品名称" width="180">
@@ -57,7 +57,6 @@
           </template>
         </el-table-column>
       </el-table>
-
     </el-card>
   </div>
 </template>
@@ -75,8 +74,7 @@ export default {
         pagenum: 1,
         pagesize: 40
       },
-      total: '',
-      addDialogVisible: false
+      total: ''
     }
   },
   methods: {
@@ -105,10 +103,6 @@ export default {
             message: '已取消删除'
           })
         })
-    },
-    // 添加角色
-    addUsers () {
-      this.addDialogVisible = true
     }
   },
   // 过滤器
